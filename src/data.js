@@ -1,0 +1,107 @@
+const asset = (n) => new URL(`./assets/flower-${n}.png`, import.meta.url).href;
+export const logoImage = new URL("./assets/logo.png", import.meta.url).href;
+export const products = [
+  {
+    id: 1,
+    name: "Тёплый август",
+    description: "Персиковые розы и воздушная зелень.",
+    category: "birthday",
+    price: 4900,
+    character: "Нежный, солнечный, с настроением праздника.",
+    image: asset(1),
+  },
+  {
+    id: 2,
+    name: "Вишнёвый свет",
+    description: "Бордовые цветы, ягоды и эвкалипт.",
+    category: "date",
+    price: 5600,
+    character: "Выразительный букет для красивого вечера.",
+    image: asset(2),
+  },
+  {
+    id: 3,
+    name: "Белый шум",
+    description: "Белые розы, ранункулюсы и хлопок.",
+    category: "thanks",
+    price: 4300,
+    character: "Спокойный и чистый жест внимания.",
+    image: asset(3),
+  },
+  {
+    id: 4,
+    name: "После дождя",
+    description: "Лавандовые оттенки и матовая зелень.",
+    category: "no-reason",
+    price: 3800,
+    character: "Свежий букет без повода.",
+    image: asset(4),
+  },
+  {
+    id: 5,
+    name: "Городской сад",
+    description: "Розовые пионы и сезонные травы.",
+    category: "all",
+    price: 6200,
+    character: "Пышный, живой, заметный.",
+    image: asset(5),
+  },
+  {
+    id: 6,
+    name: "Клубничный чай",
+    description: "Кремовые розы и малиновые акценты.",
+    category: "date",
+    price: 4700,
+    character: "Тёплая романтика в каждом стебле.",
+    image: asset(6),
+  },
+  {
+    id: 7,
+    name: "Первый снег",
+    description: "Диантусы, белые хризантемы и зелень.",
+    category: "thanks",
+    price: 3500,
+    character: "Лёгкий и очень бережный подарок.",
+    image: asset(7),
+  },
+  {
+    id: 8,
+    name: "На районе",
+    description: "Яркие герберы и сезонные цветы.",
+    category: "no-reason",
+    price: 3200,
+    character: "Цветной привет для своих.",
+    image: asset(8),
+  },
+  {
+    id: 9,
+    name: "Тихий вечер",
+    description: "Пудровые розы и ароматная мята.",
+    category: "birthday",
+    price: 5100,
+    character: "Мягкий букет для особенного вечера.",
+    image: asset(9),
+  },
+];
+export const reviews = [
+  [
+    "Анна",
+    "Заказала утром – к обеду букет уже был у мамы. Очень бережная упаковка!",
+  ],
+  [
+    "Илья",
+    "Букет приехал именно таким, как на фото. И время доставки не подвело.",
+  ],
+  [
+    "Мария",
+    "Добавила открытку, получилось очень лично. Курьер предупредил заранее.",
+  ],
+  [
+    "София",
+    "Самовывоз оказался удобным: забрала по пути из центра, цветы свежие.",
+  ],
+  [
+    "Дмитрий",
+    "Помогли выбрать букет для свидания – получилось именно то настроение.",
+  ],
+];
