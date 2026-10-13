@@ -1,5 +1,5 @@
-import "./style.css";
-import "./style-refined.css";
+import "./styles/base.css";
+import "./styles/overrides.css";
 import { products, reviews, logoImage } from "./data.js";
 import { cart } from "./cart.js";
 import { validateOrder } from "./order.js";
@@ -80,7 +80,7 @@ function render() {
     )}</div></section><section class="final-cta"><div class="container"><h2>Подарок начинается с одного клика</h2><a class="btn primary" href="#catalog">Выбрать букет</a></div></section></main><footer><div class="container footer-grid"><div><a class="logo" href="#top">лепесток<span aria-hidden="true">✿</span></a><p>Цветы с городским характером.</p></div><div><b>Навигация</b><a href="#catalog">Букеты</a><a href="#how">Как получить</a><a href="#faq">FAQ</a></div><div><b>Контакты</b><span>+7 (495) 120-48-16</span><span>hello@lepestok.ru</span><span>Ежедневно 09:00–22:00</span><span>Москва · Манежная площадь, 1<br>Пресненская набережная, 8с1</span></div></div><p class="container demo-note">Демо-версия: каталог, корзина и форма заказа работают в браузере; данные никуда не отправляются.</p><div class="container copyright">Москва · ежедневно 09:00–22:00</div></footer><aside class="cart-panel" id="cartPanel" aria-hidden="true"><div class="cart-header"><h2>Корзина</h2><button id="closeCart" type="button" aria-label="Закрыть корзину">×</button></div><div id="cartContent"></div></aside><div class="overlay" id="overlay"></div><div class="toast" id="toast" role="status" aria-live="polite"></div><dialog id="orderDialog"><form method="dialog" id="orderForm" novalidate><button class="dialog-close" value="cancel" aria-label="Закрыть оформление">×</button><p class="eyebrow">Оформление заказа</p><h2>Пара деталей – и готово</h2><div class="form-grid"><label>Имя<input name="name" autocomplete="name" required></label><label>Телефон<input name="phone" type="tel" autocomplete="tel" required></label><label>Email<input name="email" type="email" autocomplete="email" required></label><label>Способ получения<select name="method"><option value="delivery">Доставка</option><option value="pickup">Самовывоз</option></select></label><label class="full">Адрес доставки<input name="address" placeholder="Улица, дом, квартира" autocomplete="street-address"></label><label>Точка самовывоза<select name="pickup"><option value="">Выберите точку</option><option>Кремль – Манежная площадь, 1</option><option>Москва-Сити – Пресненская набережная, 8с1</option></select></label><label>Дата<input name="date" type="date" required></label><label>Временной интервал<select name="time" required><option value="">Выберите время</option><option>10:00–13:00</option><option>14:00–17:00</option><option>18:00–21:00</option></select></label><label class="full">Комментарий<textarea name="comment" rows="2"></textarea></label><label class="full">Текст открытки<textarea name="card" rows="2" placeholder="Напишите пару тёплых слов"></textarea></label></div><fieldset><legend>Оплата</legend><label><input type="radio" name="payment" value="online" checked> Онлайн-картой</label><label><input type="radio" name="payment" value="card"> Картой при получении</label><label><input type="radio" name="payment" value="cash"> Наличными при получении</label></fieldset><div id="formStatus" class="form-status" aria-live="polite"></div><button class="btn primary full" type="submit">Подтвердить заказ</button></form></dialog>`;
   if (introShown) document.querySelector("#introLoader")?.remove();
   bind();
-  updateCart();
+  renderCartPanel();
   observe();
   cleanLayout();
   if (!introShown) {
@@ -474,53 +474,7 @@ function cleanLayout() {
     if (replacements.has(value)) node.textContent = replacements.get(value);
   });
 }
-function updateCart() {
-  const content = document.querySelector("#cartContent");
-  document.querySelector("#cartCount").textContent = cart.count();
-  if (!cart.items.length) {
-    content.innerHTML =
-      '<div class="empty">Корзина пуста<br><a href="#catalog" class="btn secondary">Перейти к букетам</a></div>';
-    return;
-  }
-  content.innerHTML =
-    cart.items
-      .map((item) => {
-        const product = products.find((x) => x.id === item.id);
-        return `<div class="cart-item"><img class="product-thumb" src="${product.image}" alt=""><div><b>${product.name}</b><small>${money(product.price)}</small><div class="qty"><button type="button" data-dec="${product.id}" aria-label="Уменьшить количество">−</button><span>${item.qty}</span><button type="button" data-inc="${product.id}" aria-label="Увеличить количество">+</button><button type="button" class="remove" data-remove="${product.id}">Удалить</button></div></div></div>`;
-      })
-      .join("") +
-    `<div class="summary"><span>Букеты <b>${money(cart.subtotal())}</b></span><span>Доставка <b>После выбора способа</b></span><strong>Итого <b>${money(cart.subtotal())}</b></strong><button class="btn primary full" id="checkout" type="button">Оформить заказ</button></div>`;
-  content.querySelectorAll("[data-inc]").forEach(
-    (button) =>
-      (button.onclick = () => {
-        const id = +button.dataset.inc;
-        cart.setQty(id, cart.items.find((item) => item.id === id).qty + 1);
-        updateCart();
-      }),
-  );
-  content.querySelectorAll("[data-dec]").forEach(
-    (button) =>
-      (button.onclick = () => {
-        const id = +button.dataset.dec;
-        const item = cart.items.find((x) => x.id === id);
-        if (item.qty > 1) cart.setQty(id, item.qty - 1);
-        else cart.remove(id);
-        updateCart();
-      }),
-  );
-  content.querySelectorAll("[data-remove]").forEach(
-    (button) =>
-      (button.onclick = () => {
-        cart.remove(+button.dataset.remove);
-        updateCart();
-      }),
-  );
-  document.querySelector("#checkout").onclick = () => {
-    closeCart();
-    document.querySelector("#orderDialog").showModal();
-  };
-}
-function updateCartEnhanced() {
+function renderCartPanel() {
   const content = document.querySelector("#cartContent");
   document.querySelector("#cartCount").textContent = cart.count();
   if (!cart.items.length) {
@@ -548,7 +502,7 @@ function updateCartEnhanced() {
       (btn.onclick = () => {
         chosenMethod = btn.dataset.method;
         deliveryFee = 0;
-        updateCartEnhanced();
+        renderCartPanel();
       }),
   );
   content.querySelectorAll("[data-inc]").forEach(
@@ -556,7 +510,7 @@ function updateCartEnhanced() {
       (btn.onclick = () => {
         const id = +btn.dataset.inc;
         cart.setQty(id, cart.items.find((item) => item.id === id).qty + 1);
-        updateCartEnhanced();
+        renderCartPanel();
       }),
   );
   content.querySelectorAll("[data-dec]").forEach(
@@ -566,14 +520,14 @@ function updateCartEnhanced() {
         const item = cart.items.find((x) => x.id === id);
         if (item.qty > 1) cart.setQty(id, item.qty - 1);
         else cart.remove(id);
-        updateCartEnhanced();
+        renderCartPanel();
       }),
   );
   content.querySelectorAll("[data-remove]").forEach(
     (btn) =>
       (btn.onclick = () => {
         cart.remove(+btn.dataset.remove);
-        updateCartEnhanced();
+        renderCartPanel();
       }),
   );
   content.querySelector("#checkout").onclick = () => {
@@ -604,7 +558,6 @@ function updateCartEnhanced() {
     dialog.showModal();
   };
 }
-updateCart = updateCartEnhanced;
 function openCart() {
   document.querySelector("#cartPanel").classList.add("open");
   document.querySelector("#cartPanel").setAttribute("aria-hidden", "false");
@@ -646,7 +599,7 @@ function submitOrder(event) {
       "Заказ успешно оформлен в демо-режиме. Данные никуда не отправлялись.";
     status.className = "form-status success";
     cart.clear();
-    updateCart();
+    renderCartPanel();
   }, 800);
 }
 function observe() {
